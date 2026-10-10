@@ -3,20 +3,33 @@ package com.self.taskmanager.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.self.taskmanager.dto.TaskRequestDto;
 import com.self.taskmanager.exception.TaskNotFoundException;
 import com.self.taskmanager.model.Task;
+import com.self.taskmanager.model.TaskPriority;
+import com.self.taskmanager.model.TaskStatus;
 import com.self.taskmanager.repository.TaskRepository;
 
 @Service 
 public class TaskService {
     private final TaskRepository taskRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
     public TaskService(TaskRepository taskRepository){
         this.taskRepository = taskRepository;
     }
-    
-    public Task createTask(Task task){
+        
+    public Task createTask(TaskRequestDto dto){
+        Task task = new Task();
+        task.setTitle(dto.getTitle());
+        task.setDescription(dto.getDescription());
+        task.setStatus(dto.getStatus());
+        task.setPriority(dto.getPriority());
         return taskRepository.save(task);
     }
 
@@ -28,23 +41,31 @@ public class TaskService {
         return taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException("Task not Found with id : " + id));
     }
 
-    public Task updateTask(Long id, Task updatedTask){
+    public Task updateTask(Long id, TaskRequestDto dto){
         Task existingTask = taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException("Task not Found with id : " + id));
         
-            existingTask.setTitle(updatedTask.getTitle());
-            existingTask.setDescription(updatedTask.getDescription());
-            existingTask.setStatus(updatedTask.getStatus());
-            existingTask.setPriority(updatedTask.getPriority());
+            existingTask.setTitle(dto.getTitle());
+            existingTask.setDescription(dto.getDescription());
+            existingTask.setStatus(dto.getStatus());
+            existingTask.setPriority(dto.getPriority());
             return taskRepository.save(existingTask);
        
     }
 
-    public boolean deleteTask(Long id){
-        if(taskRepository.existsById(id)){
-            taskRepository.deleteById(id);
-            return true;
-        }else{
-            return false;
-        }
+    public void  deleteTask(Long id){
+        Task existingTask = taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException("Task not Found with id : " + id));
+        taskRepository.delete(existingTask);
+    }
+
+    public List<Task> getTaskByStatus(TaskStatus status){
+        return taskRepository.findByStatus(status);
+    }
+
+    public List<Task> getTaskByPriority(TaskPriority priority){
+        return taskRepository.findByPriority(priority);
+    }
+
+    public Page<Task> getTask(Pageable pageable){
+        return taskRepository.findAll(pageable);
     }
 }
