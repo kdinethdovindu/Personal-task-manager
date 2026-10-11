@@ -20,8 +20,9 @@ public class TaskService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public TaskService(TaskRepository taskRepository){
+    public TaskService(TaskRepository taskRepository, PasswordEncoder passwordEncoder) {
         this.taskRepository = taskRepository;
+        this.passwordEncoder = passwordEncoder;
     }
         
     public Task createTask(TaskRequestDto dto){

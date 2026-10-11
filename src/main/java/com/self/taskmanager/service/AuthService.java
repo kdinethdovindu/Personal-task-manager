@@ -1,0 +1,49 @@
+package com.self.taskmanager.service;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.self.taskmanager.dto.RegisterRequestDto;
+import com.self.taskmanager.dto.UserResponseDto;
+import com.self.taskmanager.exception.EmailAlreadyExistsException;
+import com.self.taskmanager.model.Role;
+import com.self.taskmanager.model.User;
+import com.self.taskmanager.repository.UserRepository;
+
+@Service 
+public class AuthService {
+      private final UserRepository userRepository;
+      private final PasswordEncoder passwordEncoder;
+
+      public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+          this.userRepository = userRepository;
+          this.passwordEncoder = passwordEncoder;
+      }
+
+      public UserResponseDto register(RegisterRequestDto dto) {
+        if(userRepository.existsByEmail(dto.getEmail())) {
+            throw new EmailAlreadyExistsException("Email already exists: "+ dto.getEmail());
+        }else{
+
+          User user = new User();
+
+          user.setName(dto.getName());
+          user.setEmail(dto.getEmail());
+          user.setPassword(passwordEncoder.encode(dto.getPassword()));
+          user.setRole(Role.USER);
+
+          User savedUser = userRepository.save(user);
+
+          UserResponseDto response = new UserResponseDto();
+
+          response.setId(savedUser.getId());
+          response.setName(savedUser.getName());
+          response.setEmail(savedUser.getEmail());
+          response.setRole(savedUser.getRole());
+
+          return response;
+        }
+      }
+
+    
+}
