@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.self.taskmanager.dto.LoginRequestDto;
 import com.self.taskmanager.dto.RegisterRequestDto;
 import com.self.taskmanager.dto.UserResponseDto;
 import com.self.taskmanager.service.AuthService;
@@ -30,5 +31,11 @@ public class AuthController {
         UserResponseDto user = authService.register(dto);
 
         return new ResponseEntity<>(user, HttpStatus.CREATED);
+    }
+
+    @PostMapping ("/login")
+    public ResponseEntity<String> login(@Valid @RequestBody LoginRequestDto dto) {
+        String token = authService.login(dto);
+        return ResponseEntity.ok(token);
     }
 }

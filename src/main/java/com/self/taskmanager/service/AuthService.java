@@ -1,23 +1,31 @@
 package com.self.taskmanager.service;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.self.taskmanager.dto.LoginRequestDto;
 import com.self.taskmanager.dto.RegisterRequestDto;
 import com.self.taskmanager.dto.UserResponseDto;
 import com.self.taskmanager.exception.EmailAlreadyExistsException;
 import com.self.taskmanager.model.Role;
 import com.self.taskmanager.model.User;
 import com.self.taskmanager.repository.UserRepository;
+import com.self.taskmanager.security.JwtService;
 
 @Service 
 public class AuthService {
       private final UserRepository userRepository;
       private final PasswordEncoder passwordEncoder;
+      private final AuthenticationManager authenticationManager;
+      private final JwtService jwtService;
 
-      public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+      public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService) {
           this.userRepository = userRepository;
           this.passwordEncoder = passwordEncoder;
+          this.authenticationManager = authenticationManager;
+          this.jwtService = jwtService;
       }
 
       public UserResponseDto register(RegisterRequestDto dto) {
@@ -43,6 +51,13 @@ public class AuthService {
 
           return response;
         }
+      }
+
+      public String login(LoginRequestDto dto) {
+        authenticationManager.authenticate(
+          new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword())
+        );
+        return jwtService.generateToken(dto.getEmail());
       }
 
     
