@@ -1,5 +1,7 @@
 package com.self.taskmanager.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -27,6 +29,7 @@ public class Task {
 
     @ManyToOne 
     @JoinColumn (name = "user_id")
+    @JsonIgnore 
     private User user;
 
     public Task() {
