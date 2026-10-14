@@ -12,20 +12,17 @@ import com.self.taskmanager.model.TaskPriority;
 import com.self.taskmanager.model.TaskStatus;
 import com.self.taskmanager.model.User;
 
+
 public interface TaskRepository extends JpaRepository<Task, Long> {
     
-    List<Task> findByStatus(TaskStatus status);
+        List<Task> findByUser(User user);
 
-    List<Task> findByPriority(TaskPriority priority);
+        Optional<Task> findByIdAndUser(Long id, User user);
 
-    List<Task> findByUser(User user);
+        List<Task> findByUserAndStatus(User user, TaskStatus status);
 
-    Optional<Task> findByIdAndUser(Long id, User user);
+        List<Task> findByUserAndPriority(User user, TaskPriority priority);
 
-    List<Task> findByUserAndStatus(User user, TaskStatus status);
-
-    List<Task> findByUserAndPriority(User user, TaskPriority priority);
-
-    Page<Task> findAllByUser(User user, Pageable pageable);
+        Page<Task> findAllByUser(User user, Pageable pageable);
 
 }

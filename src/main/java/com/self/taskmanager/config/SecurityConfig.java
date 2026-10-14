@@ -17,6 +17,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import java.util.List;
+
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 public class SecurityConfig {
@@ -28,6 +33,8 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
 
+                .cors(cors -> {})
+
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS
@@ -35,17 +42,22 @@ public class SecurityConfig {
                 )
 
                 .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(
-                                (request, response, authException) -> {
-                                    response.setStatus(
-                                            HttpServletResponse.SC_UNAUTHORIZED
-                                    );
-                                    response.setContentType("application/json");
-                                    response.getWriter().write(
-                                            "{\"message\":\"Authentication required\"}"
-                                    );
-                                }
-                        )
+
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.getWriter().write(
+                                    "{\"message\":\"Authentication required\"}"
+                            );
+                        })
+
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType("application/json");
+                            response.getWriter().write(
+                                    "{\"message\":\"Access denied\"}"
+                            );
+                        })
                 )
 
                 .authorizeHttpRequests(auth -> auth
@@ -78,6 +90,41 @@ public class SecurityConfig {
         authProvider.setPasswordEncoder(passwordEncoder);
 
         return new ProviderManager(authProvider);
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.setAllowedOrigins(
+                List.of("http://localhost:5173")
+        );
+
+        configuration.setAllowedMethods(
+                List.of(
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "PATCH",
+                        "DELETE",
+                        "OPTIONS"
+                )
+        );
+
+        configuration.setAllowedHeaders(List.of("*"));
+
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+
+        source.registerCorsConfiguration(
+                "/**",
+                configuration
+        );
+
+        return source;
     }
     
 }
