@@ -3,6 +3,8 @@ package com.self.taskmanager.exception;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.naming.AuthenticationException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -45,5 +47,15 @@ public class GlobalExceptionHandler {
                 HttpStatus.CONFLICT
         );
     }
+
+    @ExceptionHandler (AuthenticationException.class)
+        public ResponseEntity<String> handleAuthenticationException(
+                AuthenticationException exception) {
+        
+                return new ResponseEntity<>(
+                        exception.getMessage(),
+                        HttpStatus.UNAUTHORIZED
+                );
+        }
 
 }

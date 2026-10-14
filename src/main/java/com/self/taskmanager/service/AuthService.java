@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.self.taskmanager.dto.LoginRequestDto;
+import com.self.taskmanager.dto.LoginResponseDto;
 import com.self.taskmanager.dto.RegisterRequestDto;
 import com.self.taskmanager.dto.UserResponseDto;
 import com.self.taskmanager.exception.EmailAlreadyExistsException;
@@ -53,11 +54,23 @@ public class AuthService {
         }
       }
 
-      public String login(LoginRequestDto dto) {
+      public LoginResponseDto login(LoginRequestDto dto) {
         authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword())
         );
-        return jwtService.generateToken(dto.getEmail());
+        String token = jwtService.generateToken(dto.getEmail());
+
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
+
+        LoginResponseDto response = new LoginResponseDto();
+
+        response.setToken(token);
+        response.setEmail(user.getEmail());
+        response.setRole(user.getRole());
+
+        return response;
       }
 
     

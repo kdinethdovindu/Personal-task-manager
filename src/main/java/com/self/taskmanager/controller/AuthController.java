@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.self.taskmanager.dto.LoginRequestDto;
+import com.self.taskmanager.dto.LoginResponseDto;
 import com.self.taskmanager.dto.RegisterRequestDto;
 import com.self.taskmanager.dto.UserResponseDto;
 import com.self.taskmanager.service.AuthService;
@@ -34,8 +35,8 @@ public class AuthController {
     }
 
     @PostMapping ("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody LoginRequestDto dto) {
-        String token = authService.login(dto);
-        return ResponseEntity.ok(token);
+    public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginRequestDto dto) {
+        LoginResponseDto response = authService.login(dto);
+        return ResponseEntity.ok(response);
     }
 }
