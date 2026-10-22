@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 
@@ -19,6 +20,7 @@ public class User {
     private Long id;
 
     private String name;
+    @Column(nullable = false, unique = true)
     private String email;
     private String password;
 

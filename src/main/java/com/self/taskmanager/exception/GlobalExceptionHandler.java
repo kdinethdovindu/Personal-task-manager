@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.dao.DataIntegrityViolationException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -38,6 +40,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errors);
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, String>> handleUnreadableRequest(
+            HttpMessageNotReadableException exception) {
+
+        return ResponseEntity.badRequest().body(Map.of(
+                "message", "Request body contains an invalid value"
+        ));
+    }
+
         @ExceptionHandler(EmailAlreadyExistsException.class)
         public ResponseEntity<Map<String, String>> handleEmailAlreadyExists(
                 EmailAlreadyExistsException ex) {
@@ -46,6 +57,17 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.CONFLICT)
                 .body(Map.of(
                         "message", ex.getMessage()
+                ));
+        }
+
+        @ExceptionHandler(DataIntegrityViolationException.class)
+        public ResponseEntity<Map<String, String>> handleDataIntegrityViolation(
+                DataIntegrityViolationException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of(
+                        "message", "The request conflicts with existing data"
                 ));
         }
 
