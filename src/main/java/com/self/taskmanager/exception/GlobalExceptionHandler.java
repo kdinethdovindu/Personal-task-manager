@@ -38,24 +38,26 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errors);
     }
 
-    @ExceptionHandler (EmailAlreadyExistsException.class)
-    public ResponseEntity<String> handleEmailAlreadyExistsException(
-            EmailAlreadyExistsException exception) {
+        @ExceptionHandler(EmailAlreadyExistsException.class)
+        public ResponseEntity<Map<String, String>> handleEmailAlreadyExists(
+                EmailAlreadyExistsException ex) {
 
-        return new ResponseEntity<>(
-                exception.getMessage(),
-                HttpStatus.CONFLICT
-        );
-    }
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of(
+                        "message", ex.getMessage()
+                ));
+        }
 
         @ExceptionHandler(AuthenticationException.class)
-        public ResponseEntity<String> handleAuthenticationException(
-                AuthenticationException exception) {
+        public ResponseEntity<Map<String, String>> handleAuthenticationException(
+                AuthenticationException ex) {
 
-        return new ResponseEntity<>(
-                "Invalid email or password",
-                HttpStatus.UNAUTHORIZED
-        );
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of(
+                        "message", "Invalid email or password"
+                ));
         }
 
 }
