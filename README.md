@@ -7,7 +7,7 @@ The backend provides user authentication and user-specific task management while
 ## Frontend
 
 **Live Application:**  
-https://personal-task-manager-frontend-six.vercel.app
+https://personal-task-manager-frontend-six.vercel.app/register
 
 **Frontend Repository:**  
 https://github.com/kdinethdovindu/personal-task-manager-frontend
