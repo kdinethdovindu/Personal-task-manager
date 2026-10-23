@@ -207,8 +207,8 @@ Maven Wrapper is included in the repository.
 ### Clone repository
 
 ```bash
-git clone https://github.com/kdinethdovindu/Personal-task-manager.git
-cd Personal-task-manager
+git clone https://github.com/kdinethdovindu/Personal-task-manager-Backend.git
+cd Personal-task-manager-Backend
 ```
 
 ### Create PostgreSQL database
